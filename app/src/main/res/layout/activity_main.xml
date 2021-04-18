@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+    </WebView>
+
+    <ImageButton
+        android:id="@+id/btn__up"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_click"
+        android:rotation="90"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/btn__left"
+        app:layout_constraintEnd_toStartOf="@+id/btn__right"
+        app:layout_constraintStart_toEndOf="@+id/btn__left" />
+
+    <ImageButton
+        android:id="@+id/btn__down"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/button_click"
+        android:rotation="-90"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn__left"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_click"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/btn__down"
+        app:layout_constraintEnd_toStartOf="@+id/btn__down" />
+
+    <ImageButton
+        android:id="@+id/btn__right"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/button_click"
+        android:rotation="180"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/btn__down"
+        app:layout_constraintStart_toEndOf="@+id/btn__down" />
+
+    <ImageButton
+        android:id="@+id/btn__camup"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/button_click"
+        android:rotation="90"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toTopOf="@+id/btn__camdown"
+        app:layout_constraintEnd_toEndOf="@+id/btn__camdown"
+        app:layout_constraintStart_toStartOf="@+id/btn__camdown" />
+
+    <ImageButton
+        android:id="@+id/btn__camdown"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/button_click"
+        android:rotation="-90"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginBottom="5dp"
+        android:text="@string/connect_ip"
+        android:textColor="#C3C0C0"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btn__connect"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:background="#00FFFFFF"
+        android:onClick="Connecting"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/connect" />
+
+    <TextView
+        android:id="@+id/textView_ip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:text="@string/connect_ip_address"
+        android:textColor="#C3C0C0"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:text="@string/gassensor_value"
+        android:textColor="#FFFFFF"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView_gas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="5dp"
+        android:text="gasValue"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/textView2"
+        app:layout_constraintStart_toEndOf="@+id/textView2" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
