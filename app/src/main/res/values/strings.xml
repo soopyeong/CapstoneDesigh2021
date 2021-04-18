@@ -4,4 +4,5 @@
     <string name="connect_ip">Connecting IP :</string>
     <string name="connect_ip_address">IP address</string>
     <string name="gassensor_value">가스센서 값 :</string>
+    <string name="distance_value">정면 거리 :</string>
 </resources>

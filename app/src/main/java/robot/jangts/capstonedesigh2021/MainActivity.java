@@ -26,10 +26,10 @@ import java.net.Socket;
 public class MainActivity extends AppCompatActivity {
 
     ImageButton btn__connect; // 연결 버튼
-    TextView textView_ip, textView_gas;
+    TextView textView_ip, textView_gas, textView_dis;
 
     ImageButton btn_up, btn_down, btn_right, btn_left; // 로봇 조종 버튼
-    ImageButton btn_cam_up, btn_cam_down;
+    ImageButton btn_cam_up, btn_cam_down, btn_led;
 
     private Handler mHandler;
 
@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String ip;
     private int port = 9999; // 소켓통신 포트
+
+    private boolean led_state = false;
 
     WebView webView;
     //String url = "http://192.168.0.225:8091/?action=stream";
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         btn__connect = findViewById(R.id.btn__connect);
         textView_ip = findViewById(R.id.textView_ip);
         textView_gas = findViewById(R.id.textView_gas);
+        textView_dis = findViewById(R.id.textView_dis);
 
         btn_up = findViewById(R.id.btn__up);
         btn_down = findViewById(R.id.btn__down);
@@ -61,18 +64,22 @@ public class MainActivity extends AppCompatActivity {
         btn_left = findViewById(R.id.btn__left);
         btn_cam_up = findViewById(R.id.btn__camup);
         btn_cam_down = findViewById(R.id.btn__camdown);
+        btn_led = findViewById(R.id.btn__led);
 
         btn_up.setOnTouchListener(RobotButtonListener);
         btn_down.setOnTouchListener(RobotButtonListener);
         btn_right.setOnTouchListener(RobotButtonListener);
         btn_left.setOnTouchListener(RobotButtonListener);
 
+        btn_cam_up.setOnTouchListener(RobotButtonListener2);
+        btn_cam_down.setOnTouchListener(RobotButtonListener2);
+        btn_led.setOnTouchListener(RobotButtonListener2);
+
         webView = findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(url);
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClientClass());
-
     }
 
     void btn_up() {  // 전진버튼 스레드
@@ -140,6 +147,66 @@ public class MainActivity extends AppCompatActivity {
         Btn_stop.start();
     }
 
+    void cam_up() {  // 카메라 위 버튼 스레드
+        Thread Cam_up = new Thread() {
+            public void run() {
+                try {
+                    dos.writeUTF("c_up");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        Cam_up.start();
+    }
+
+    void cam_down() {  // 카메라 아래 버튼 스레드
+        Thread Cam_down = new Thread() {
+            public void run() {
+                try {
+                    dos.writeUTF("c_down");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        Cam_down.start();
+    }
+
+    void led_onoff() {  // led on,off 스레드
+        if(led_state == false) {
+            led_state = true;
+            btn_led.setImageResource(R.drawable.led_on);
+        }
+        else {
+            led_state = false;
+            btn_led.setImageResource(R.drawable.led_off);
+        }
+        Thread LED_onoff = new Thread() {
+            public void run() {
+                try {
+                    dos.writeUTF("led_onoff");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        LED_onoff.start();
+    }
+
+    void btn_stop2() {  // 리스너2 스탑 버튼
+        Thread Btn_stop2 = new Thread() {
+            public void run() {
+                try {
+                    dos.writeUTF("c_stop");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        Btn_stop2.start();
+    }
+
     private View.OnTouchListener RobotButtonListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
@@ -161,6 +228,34 @@ public class MainActivity extends AppCompatActivity {
             }
             else if(event.getAction() == MotionEvent.ACTION_UP) {
                 btn_stop();
+            }
+            return false;
+        }
+    };
+
+    private View.OnTouchListener RobotButtonListener2 = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                switch (v.getId()) {
+                    case R.id.btn__camup:
+                        cam_up();
+                        break;
+                    case R.id.btn__camdown:
+                        cam_down();
+                        break;
+                    case R.id.btn__led:
+                        led_onoff();
+                        break;
+                }
+            }
+            else if(event.getAction() == MotionEvent.ACTION_UP) {
+                if(v.getId() == R.id.btn__led) {
+
+                }
+                else {
+                    btn_stop2();
+                }
             }
             return false;
         }
@@ -239,14 +334,23 @@ public class MainActivity extends AppCompatActivity {
                     Log.w("버퍼", "버퍼생성 잘못됨");
                 }
                 Log.w("버퍼","버퍼생성 잘됨");
+                btn__connect.setImageResource(R.drawable.connecting);
 
                 while(true) {
                     try {
+                        byte[] buffer = new byte[1024];
+                        int bytes;
                         String sensor = "";
+                        String[] sensor_value; // 0:distance, 1:gas, 2:battery
                         while (true) {
-                            sensor = dis.readUTF();
+                            bytes = dis.read(buffer);
+                            sensor = new String(buffer, 0, bytes);
+                            sensor_value = sensor.split("\\/");
+                            String dis_value = sensor_value[0] + "cm";
 
                             Log.w("------서버에서 받아온 값 ", "" + sensor);
+                            textView_dis.setText(dis_value);
+                            textView_gas.setText(sensor_value[1]);
 
                             /*if (line2 == 99) {
                                 Log.w("------서버에서 받아온 값 ", "" + line2);
