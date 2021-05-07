@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private boolean led_state = false;
 
     WebView webView;
-    //String url = "http://192.168.0.225:8091/?action=stream";
-    String url = "http://www.google.com";
+    String url = "http://192.168.35.99:8091/?action=stream";
+    //String url = "http://www.google.com";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

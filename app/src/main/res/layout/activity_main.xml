@@ -64,13 +64,13 @@
         android:id="@+id/btn__camup"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/button_click"
         android:rotation="90"
         android:scaleType="fitXY"
-        app:layout_constraintBottom_toTopOf="@+id/btn__camdown"
         app:layout_constraintEnd_toEndOf="@+id/btn__camdown"
-        app:layout_constraintStart_toStartOf="@+id/btn__camdown" />
+        app:layout_constraintStart_toStartOf="@+id/btn__camdown"
+        app:layout_constraintTop_toTopOf="@+id/btn__up" />
 
     <ImageButton
         android:id="@+id/btn__camdown"
@@ -78,11 +78,11 @@
         android:layout_height="60dp"
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/button_click"
         android:rotation="-90"
         android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/btn__down"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -196,8 +196,8 @@
 
     <ImageButton
         android:id="@+id/btn__led"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:background="#00FFFFFF"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/btn__camup"
