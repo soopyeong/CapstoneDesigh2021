@@ -14,6 +14,7 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -26,10 +27,12 @@ import java.net.Socket;
 public class MainActivity extends AppCompatActivity {
 
     ImageButton btn__connect; // 연결 버튼
-    TextView textView_ip, textView_gas, textView_dis;
+    TextView textView_ip, textView_gas, textView_dis, textView_battery;
 
     ImageButton btn_up, btn_down, btn_right, btn_left; // 로봇 조종 버튼
     ImageButton btn_cam_up, btn_cam_down, btn_led;
+
+    Button btn_power;
 
     private Handler mHandler;
 
@@ -47,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     String url = "http://192.168.35.99:8091/?action=stream";
     //String url = "http://www.google.com";
 
+    private int power_state = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         textView_ip = findViewById(R.id.textView_ip);
         textView_gas = findViewById(R.id.textView_gas);
         textView_dis = findViewById(R.id.textView_dis);
+        textView_battery = findViewById(R.id.textView_battery);
 
         btn_up = findViewById(R.id.btn__up);
         btn_down = findViewById(R.id.btn__down);
@@ -65,11 +71,13 @@ public class MainActivity extends AppCompatActivity {
         btn_cam_up = findViewById(R.id.btn__camup);
         btn_cam_down = findViewById(R.id.btn__camdown);
         btn_led = findViewById(R.id.btn__led);
+        btn_power = findViewById(R.id.btn__power);
 
         btn_up.setOnTouchListener(RobotButtonListener);
         btn_down.setOnTouchListener(RobotButtonListener);
         btn_right.setOnTouchListener(RobotButtonListener);
         btn_left.setOnTouchListener(RobotButtonListener);
+        btn_power.setOnTouchListener(RobotButtonListener);
 
         btn_cam_up.setOnTouchListener(RobotButtonListener2);
         btn_cam_down.setOnTouchListener(RobotButtonListener2);
@@ -145,6 +153,41 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         Btn_stop.start();
+    }
+
+    void btn_power() {  // 속도버튼 스레드
+        Thread Btn_power = new Thread() {
+            public void run() {
+                if(power_state == 0) {
+                    power_state = 1;
+                    btn_power.setText("하");
+                    try {
+                        dos.writeUTF("power_low");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else if(power_state == 1) {
+                    power_state = 2;
+                    btn_power.setText("중");
+                    try {
+                        dos.writeUTF("power_mid");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    power_state = 0;
+                    btn_power.setText("상");
+                    try {
+                        dos.writeUTF("power_high");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        Btn_power.start();
     }
 
     void cam_up() {  // 카메라 위 버튼 스레드
@@ -223,6 +266,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                     case R.id.btn__right:
                         btn_right();
+                        break;
+                    case R.id.btn__power:
+                        btn_power();
                         break;
                 }
             }
@@ -334,7 +380,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.w("버퍼", "버퍼생성 잘못됨");
                 }
                 Log.w("버퍼","버퍼생성 잘됨");
-                btn__connect.setImageResource(R.drawable.connecting);
 
                 while(true) {
                     try {
@@ -347,10 +392,12 @@ public class MainActivity extends AppCompatActivity {
                             sensor = new String(buffer, 0, bytes);
                             sensor_value = sensor.split("\\/");
                             String dis_value = sensor_value[0] + "cm";
+                            String bat_value = (Integer.parseInt(sensor_value[2]) - 2700)/13 + "%";
 
                             Log.w("------서버에서 받아온 값 ", "" + sensor);
                             textView_dis.setText(dis_value);
                             textView_gas.setText(sensor_value[1]);
+                            textView_battery.setText(bat_value);
 
                             /*if (line2 == 99) {
                                 Log.w("------서버에서 받아온 값 ", "" + line2);
