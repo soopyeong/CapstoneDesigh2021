@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private int port = 9999; // 소켓통신 포트
 
     private boolean led_state = false;
+    private boolean cam_rotation = false;
 
     WebView webView;
     String url = "http://192.168.35.99:8091/?action=stream";
@@ -306,6 +307,24 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+
+    public void Cam_Reverse(View v) {
+        Thread Btn_reverse = new Thread() {
+            public void run() {
+                if(cam_rotation) {
+                    webView.setRotation(0);
+                    Log.w("rotation", "0");
+                    cam_rotation = false;
+                }
+                else {
+                    webView.setRotation(180);
+                    Log.w("rotation", "180");
+                    cam_rotation = true;
+                }
+            }
+        };
+        Btn_reverse.start();
+    }
 
     private class WebViewClientClass extends WebViewClient { // 웹뷰 관련 클래스
         @Override
