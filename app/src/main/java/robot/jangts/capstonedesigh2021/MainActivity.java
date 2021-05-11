@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -159,33 +160,8 @@ public class MainActivity extends AppCompatActivity {
     void btn_power() {  // 속도버튼 스레드
         Thread Btn_power = new Thread() {
             public void run() {
-                if(power_state == 0) {
-                    power_state = 1;
-                    btn_power.setText("하");
-                    try {
-                        dos.writeUTF("power_low");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else if(power_state == 1) {
-                    power_state = 2;
-                    btn_power.setText("중");
-                    try {
-                        dos.writeUTF("power_mid");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                else {
-                    power_state = 0;
-                    btn_power.setText("상");
-                    try {
-                        dos.writeUTF("power_high");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);
             }
         };
         Btn_power.start();
@@ -305,6 +281,38 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             return false;
+        }
+    };
+
+    final Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            if(power_state == 0) {
+                power_state = 1;
+                btn_power.setText("하");
+                try {
+                    dos.writeUTF("power_low");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if(power_state == 1) {
+                power_state = 2;
+                btn_power.setText("중");
+                try {
+                    dos.writeUTF("power_mid");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                power_state = 0;
+                btn_power.setText("상");
+                try {
+                    dos.writeUTF("power_high");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     };
 
