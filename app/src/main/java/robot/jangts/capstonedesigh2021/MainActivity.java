@@ -28,7 +28,7 @@ import java.net.Socket;
 public class MainActivity extends AppCompatActivity {
 
     ImageButton btn__connect; // 연결 버튼
-    TextView textView_ip, textView_gas, textView_dis, textView_battery;
+    TextView textView_ip, textView_gas, textView_dis, textView_battery, textView6;
 
     ImageButton btn_up, btn_down, btn_right, btn_left; // 로봇 조종 버튼
     ImageButton btn_cam_up, btn_cam_down, btn_led;
@@ -49,8 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean cam_rotation = false;
 
     WebView webView;
-    String url = "http://192.168.35.99:8091/?action=stream";
-    //String url = "http://www.google.com";
+    String url;
 
     private int power_state = 0;
 
@@ -65,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         textView_gas = findViewById(R.id.textView_gas);
         textView_dis = findViewById(R.id.textView_dis);
         textView_battery = findViewById(R.id.textView_battery);
+        textView6 = findViewById(R.id.textView6);
 
         btn_up = findViewById(R.id.btn__up);
         btn_down = findViewById(R.id.btn__down);
@@ -86,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
         btn_led.setOnTouchListener(RobotButtonListener2);
 
         webView = findViewById(R.id.webView);
+
+    }
+
+    void cam_connect() {
+        textView6.setVisibility(View.GONE);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(url);
         webView.setWebChromeClient(new WebChromeClient());
@@ -160,8 +165,35 @@ public class MainActivity extends AppCompatActivity {
     void btn_power() {  // 속도버튼 스레드
         Thread Btn_power = new Thread() {
             public void run() {
-                Message msg = handler.obtainMessage();
-                handler.sendMessage(msg);
+                /*Message msg = handler.obtainMessage();
+                handler.sendMessage(msg);*/
+                if(power_state == 0) {
+                    power_state = 1;
+                    btn_power.setText("하");
+                    try {
+                        dos.writeUTF("power_low");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else if(power_state == 1) {
+                    power_state = 2;
+                    btn_power.setText("중");
+                    try {
+                        dos.writeUTF("power_mid");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    power_state = 0;
+                    btn_power.setText("상");
+                    try {
+                        dos.writeUTF("power_high");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         };
         Btn_power.start();
@@ -231,22 +263,43 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                switch (v.getId()) {
-                    case R.id.btn__up:
-                        btn_up();
-                        break;
-                    case R.id.btn__down:
-                        btn_down();
-                        break;
-                    case R.id.btn__left:
-                        btn_left();
-                        break;
-                    case R.id.btn__right:
-                        btn_right();
-                        break;
-                    case R.id.btn__power:
-                        btn_power();
-                        break;
+                if(cam_rotation) {
+                    switch (v.getId()) {
+                        case R.id.btn__up:
+                            btn_down();
+                            break;
+                        case R.id.btn__down:
+                            btn_up();
+                            break;
+                        case R.id.btn__left:
+                            btn_left();
+                            break;
+                        case R.id.btn__right:
+                            btn_right();
+                            break;
+                        case R.id.btn__power:
+                            btn_power();
+                            break;
+                    }
+                }
+                else {
+                    switch (v.getId()) {
+                        case R.id.btn__up:
+                            btn_up();
+                            break;
+                        case R.id.btn__down:
+                            btn_down();
+                            break;
+                        case R.id.btn__left:
+                            btn_left();
+                            break;
+                        case R.id.btn__right:
+                            btn_right();
+                            break;
+                        case R.id.btn__power:
+                            btn_power();
+                            break;
+                    }
                 }
             }
             else if(event.getAction() == MotionEvent.ACTION_UP) {
@@ -260,16 +313,31 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                switch (v.getId()) {
-                    case R.id.btn__camup:
-                        cam_up();
-                        break;
-                    case R.id.btn__camdown:
-                        cam_down();
-                        break;
-                    case R.id.btn__led:
-                        led_onoff();
-                        break;
+                if(cam_rotation) {
+                    switch (v.getId()) {
+                        case R.id.btn__camup:
+                            cam_down();
+                            break;
+                        case R.id.btn__camdown:
+                            cam_up();
+                            break;
+                        case R.id.btn__led:
+                            led_onoff();
+                            break;
+                    }
+                }
+                else {
+                    switch (v.getId()) {
+                        case R.id.btn__camup:
+                            cam_up();
+                            break;
+                        case R.id.btn__camdown:
+                            cam_down();
+                            break;
+                        case R.id.btn__led:
+                            led_onoff();
+                            break;
+                    }
                 }
             }
             else if(event.getAction() == MotionEvent.ACTION_UP) {
@@ -284,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    final Handler handler = new Handler() {
+    /*final Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             if(power_state == 0) {
                 power_state = 1;
@@ -314,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    };
+    };*/
 
     public void Cam_Reverse(View v) {
         Thread Btn_reverse = new Thread() {
@@ -364,6 +432,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int whichButton) {
                 ip = name.getText().toString();
                 textView_ip.setText(ip);
+                url = "http://"+ip+":8091/?action=stream";
+                cam_connect();
                 connect();
             }
         });
