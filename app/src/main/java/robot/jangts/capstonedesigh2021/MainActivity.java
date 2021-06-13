@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         btn__connect = findViewById(R.id.btn__connect);
         textView_ip = findViewById(R.id.textView_ip);
-        textView_gas = findViewById(R.id.textView_gas);
+        textView_gas = findViewById(R.id.textView_gas);//
         textView_dis = findViewById(R.id.textView_dis);
         textView_battery = findViewById(R.id.textView_battery);
         textView6 = findViewById(R.id.textView6);
